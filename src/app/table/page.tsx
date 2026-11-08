@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { FactCard } from "@/components/ui";
+import { FactCard, PageHeader } from "@/components/ui";
+import { Icon } from "@/components/icons";
 import { CHARACTERS, NUMBERS } from "@/lib/data";
 import { MASTERED_BOX, boxOf, useProgress } from "@/lib/progress";
 import Character from "@/components/Characters";
@@ -36,30 +37,44 @@ export default function TablePage() {
 
   return (
     <>
-      <h1 className="page-title">🔢 לוח הכפל הקסום</h1>
-      <p className="lead center">עברו עם העכבר (או האצבע) על הלוח ולחצו על משבצת כדי לראות ציור, סיפור וטריק.</p>
+      <PageHeader
+        icon="grid"
+        eyebrow="לוח אינטראקטיבי"
+        title={
+          <>
+            לוח הכפל <span className="gradient-text">הקסום</span>
+          </>
+        }
+        subtitle="עברו על הלוח ולחצו על משבצת כדי לראות ציור, סיפור וטריק."
+      />
 
       <div className="mode-switch">
         <button className={mode === "plain" ? "tab active" : "tab"} onClick={() => setMode("plain")}>
-          🎨 רגיל
+          <Icon name="eye" size={17} /> רגיל
         </button>
         <button className={mode === "mirror" ? "tab active" : "tab"} onClick={() => setMode("mirror")}>
-          🔄 קסם ההחלפה
+          <Icon name="swap" size={17} /> קסם ההחלפה
         </button>
         <button className={mode === "mastery" ? "tab active" : "tab"} onClick={() => setMode("mastery")}>
-          🧠 מה אני כבר יודע/ת
+          <Icon name="brain" size={17} /> מה אני כבר יודע/ת
         </button>
       </div>
 
       {mode === "mirror" && (
         <div className="info-box">
-          🔄 <b>סוד גדול:</b> 4 × 7 שווה בדיוק ל-7 × 4. כל המשבצות האפורות הן "תאומות" של משבצות שכבר יש. אז במקום 100
+          <Icon name="sparkles" size={20} />
+          <span>
+            <b>סוד גדול:</b> 4 × 7 שווה בדיוק ל-7 × 4. כל המשבצות האפורות הן "תאומות" של משבצות שכבר יש. אז במקום 100
           תרגילים – צריך ללמוד רק 55! והשורות של 1, 2, 5 ו-10 הן קלות מאוד, אז נשארים רק כ-<b>21</b> תרגילים "קשים".
+          </span>
         </div>
       )}
       {mode === "mastery" && (
         <div className="info-box">
-          🟩 יודעים · 🟨 בדרך · ⬜ עוד לא תרגלנו — כבר שלטתם ב-<b>{knownCount}</b> מתוך 100 משבצות!
+          <Icon name="target" size={20} />
+          <span>
+            ירוק = יודעים · צהוב = בדרך · אפור = עוד לא תרגלנו. כבר שלטתם ב-<b>{knownCount}</b> מתוך 100 משבצות!
+          </span>
         </div>
       )}
 

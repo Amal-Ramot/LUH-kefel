@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Character from "@/components/Characters";
-import { Stars } from "@/components/ui";
+import { PageHeader, Stars } from "@/components/ui";
+import { Icon, type IconName } from "@/components/icons";
 import { CHARACTERS, NUMBERS } from "@/lib/data";
 import { MASTERED_BOX, tableMastery, useProgress } from "@/lib/progress";
 
@@ -15,33 +16,35 @@ export default function ProgressPage() {
 
   return (
     <>
-      <h1 className="page-title">🏆 אלבום המדבקות שלי</h1>
+      <PageHeader
+        icon="trophy"
+        eyebrow="ההישגים שלי"
+        title={
+          <>
+            אלבום <span className="gradient-text">המדבקות</span>
+          </>
+        }
+        subtitle="מקבלים מדבקה כשמשיגים 3 כוכבים בבוחן של הלוח, או כשיודעים את רוב התרגילים שלו."
+      />
       <div className="stats">
-        <div className="stat">
-          <b>{stickers.length}/10</b>
-          <span>מדבקות</span>
-        </div>
-        <div className="stat">
-          <b>{known}/55</b>
-          <span>תרגילים שאני יודע/ת</span>
-        </div>
-        <div className="stat">
-          <b>{progress.correct}</b>
-          <span>תשובות נכונות</span>
-        </div>
-        <div className="stat">
-          <b>{progress.streakDays.length}</b>
-          <span>ימי תרגול</span>
-        </div>
-        <div className="stat">
-          <b>{progress.gameHigh}</b>
-          <span>שיא במשחק 🚀</span>
-        </div>
+        {(
+          [
+            ["trophy", `${stickers.length}/10`, "מדבקות"],
+            ["target", `${known}/55`, "תרגילים שאני יודע/ת"],
+            ["check", progress.correct, "תשובות נכונות"],
+            ["calendar", progress.streakDays.length, "ימי תרגול"],
+            ["rocket", progress.gameHigh, "שיא במשחק"],
+          ] as [IconName, string | number, string][]
+        ).map(([icon, value, label]) => (
+          <div className="stat" key={label}>
+            <span className="stat-ico">
+              <Icon name={icon} size={18} />
+            </span>
+            <b>{value}</b>
+            <span>{label}</span>
+          </div>
+        ))}
       </div>
-
-      <p className="center muted">
-        מקבלים מדבקה כשמשיגים 3 כוכבים בבוחן של הלוח, או כשמתרגלים ויודעים את רוב התרגילים שלו.
-      </p>
 
       <div className="album">
         {NUMBERS.map((n) => {
@@ -52,7 +55,7 @@ export default function ProgressPage() {
               href={`/learn/${n}/`}
               key={n}
               className={`sticker ${has ? "has" : "locked"}`}
-              style={{ background: has ? c.soft : undefined, borderColor: has ? c.color : undefined }}
+              style={{ ["--c" as string]: c.color }}
             >
               <Character n={n} size={90} animate={has ? "wiggle" : "none"} />
               <b>{has ? c.name : "???"}</b>
@@ -70,7 +73,7 @@ export default function ProgressPage() {
             if (confirm("למחוק את כל ההתקדמות ולהתחיל מחדש?")) reset();
           }}
         >
-          🗑️ איפוס התקדמות
+          <Icon name="trash" size={15} /> איפוס התקדמות
         </button>
       </div>
     </>

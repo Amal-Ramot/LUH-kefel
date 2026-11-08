@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#8e5cd9",
+  themeColor: "#6d4aff",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,19 +21,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
-          href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&family=Varela+Round&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800;900&family=Rubik:wght@500;700;800;900&display=swap"
           rel="stylesheet"
         />
       </head>
       <body>
-        <div className="sky" aria-hidden="true">
-          <span className="cloud c1" />
-          <span className="cloud c2" />
-          <span className="cloud c3" />
+        <div className="aurora" aria-hidden="true">
+          <span className="blob b1" />
+          <span className="blob b2" />
+          <span className="blob b3" />
+          <span className="blob b4" />
         </div>
+        <div className="grid-bg" aria-hidden="true" />
         <NavBar />
         <main className="container">{children}</main>
-        <footer className="footer">נבנה באהבה ללומדים הצעירים ✨ כל ההתקדמות נשמרת במכשיר שלכם</footer>
+        <footer className="footer">לוח הכפל בכיף · ההתקדמות נשמרת במכשיר שלכם בלבד</footer>
       </body>
     </html>
   );

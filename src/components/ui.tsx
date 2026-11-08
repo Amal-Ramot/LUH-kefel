@@ -5,36 +5,91 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CHARACTERS, bestTrickFor, factSentence, speak, storyFor } from "@/lib/data";
 import Character from "./Characters";
+import { Icon, type IconName } from "./icons";
 
-const LINKS = [
-  { href: "/", label: "בית", icon: "🏠" },
-  { href: "/learn/", label: "לומדים", icon: "📖" },
-  { href: "/table/", label: "הלוח", icon: "🔢" },
-  { href: "/practice/", label: "מתרגלים", icon: "🧠" },
-  { href: "/game/", label: "משחק", icon: "🚀" },
-  { href: "/progress/", label: "המדבקות שלי", icon: "🏆" },
+const LINKS: { href: string; label: string; icon: IconName }[] = [
+  { href: "/", label: "בית", icon: "home" },
+  { href: "/learn/", label: "לומדים", icon: "book" },
+  { href: "/table/", label: "הלוח", icon: "grid" },
+  { href: "/practice/", label: "תרגול", icon: "brain" },
+  { href: "/game/", label: "משחק", icon: "rocket" },
+  { href: "/progress/", label: "הישגים", icon: "trophy" },
 ];
 
 export function NavBar() {
   const path = usePathname() || "/";
   const norm = (p: string) => (p.endsWith("/") ? p : p + "/");
+  const isActive = (href: string) => (href === "/" ? norm(path) === "/" : norm(path).startsWith(href));
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const h = () => setScrolled(window.scrollY > 8);
+    h();
+    window.addEventListener("scroll", h, { passive: true });
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+
   return (
-    <nav className="nav">
-      <Link href="/" className="brand">
-        <span className="brand-badge">×</span> לוח הכפל בכיף
-      </Link>
-      <div className="nav-links">
-        {LINKS.map((l) => {
-          const active = l.href === "/" ? norm(path) === "/" : norm(path).startsWith(l.href);
-          return (
-            <Link key={l.href} href={l.href} className={`nav-link ${active ? "active" : ""}`}>
-              <span className="nav-icon">{l.icon}</span>
-              <span className="nav-label">{l.label}</span>
-            </Link>
-          );
-        })}
-      </div>
-    </nav>
+    <>
+      <header className={`topbar ${scrolled ? "scrolled" : ""}`}>
+        <div className="topbar-inner glass">
+          <Link href="/" className="brand" aria-label="דף הבית">
+            <span className="brand-mark">
+              <span>×</span>
+            </span>
+            <span className="brand-text">
+              <b>לוח הכפל</b>
+              <small>לומדים בכיף</small>
+            </span>
+          </Link>
+          <nav className="nav-links" aria-label="ניווט ראשי">
+            {LINKS.map((l) => (
+              <Link key={l.href} href={l.href} className={`nav-link ${isActive(l.href) ? "active" : ""}`}>
+                <Icon name={l.icon} size={18} />
+                <span>{l.label}</span>
+              </Link>
+            ))}
+          </nav>
+          <Link href="/practice/" className="btn small nav-cta">
+            <Icon name="play" size={14} /> תרגול מהיר
+          </Link>
+        </div>
+      </header>
+
+      {/* סרגל תחתון בסגנון אפליקציה – לטלפונים */}
+      <nav className="tabbar glass" aria-label="ניווט">
+        {LINKS.map((l) => (
+          <Link key={l.href} href={l.href} className={`tab-item ${isActive(l.href) ? "active" : ""}`}>
+            <span className="tab-icon">
+              <Icon name={l.icon} size={22} />
+            </span>
+            <span>{l.label}</span>
+          </Link>
+        ))}
+      </nav>
+    </>
+  );
+}
+
+/** כותרת עמוד אחידה: תווית קטנה, כותרת וטקסט משנה */
+export function PageHeader({
+  icon,
+  eyebrow,
+  title,
+  subtitle,
+}: {
+  icon: IconName;
+  eyebrow: string;
+  title: React.ReactNode;
+  subtitle?: React.ReactNode;
+}) {
+  return (
+    <header className="page-header">
+      <span className="eyebrow">
+        <Icon name={icon} size={15} /> {eyebrow}
+      </span>
+      <h1 className="display">{title}</h1>
+      {subtitle && <p className="subtitle">{subtitle}</p>}
+    </header>
   );
 }
 
@@ -159,33 +214,54 @@ export function FactCard({ a, b, onClose }: { a: number; b: number; onClose?: ()
   const c = CHARACTERS[big];
   const trick = bestTrickFor(a, b);
   return (
-    <div className="fact-card" style={{ borderColor: c.color, background: c.soft }}>
+    <div className="fact-card card" style={{ ["--c" as string]: c.color, ["--soft" as string]: c.soft }}>
       {onClose && (
-        <button className="close" onClick={onClose} aria-label="סגירה">
-          ✕
+        <button className="icon-btn close" onClick={onClose} aria-label="סגירה">
+          <Icon name="x" size={18} />
         </button>
       )}
       <div className="fact-head">
-        <Character n={big} size={90} animate="bounce" />
+        <div className="fact-avatar">
+          <Character n={big} size={84} animate="bounce" />
+        </div>
         <div>
           <div className="fact-eq" dir="ltr">
-            {a} × {b} = <b style={{ color: c.color }}>{a * b}</b>
+            {a} × {b} = <b>{a * b}</b>
           </div>
-          <button className="btn small ghost" onClick={() => speak(factSentence(a, b))}>
-            🔊 הקשיבו
+          <button className="chip-btn" onClick={() => speak(factSentence(a, b))}>
+            <Icon name="volume" size={16} /> הקשיבו
           </button>
         </div>
       </div>
       <DotArray a={a} b={b} />
-      <p className="story">📖 <MathText text={storyFor(a, b)} /></p>
-      <p className="trick">
-        💡 <b>{trick.title}:</b> <MathText text={trick.text} />
-      </p>
-      {a !== b && (
-        <p className="swap">
-          🔄 קסם ההחלפה: <span dir="ltr">{b} × {a}</span> זה בדיוק אותו דבר!
-        </p>
-      )}
+      <div className="fact-rows">
+        <div className="fact-row">
+          <span className="fact-ico" style={{ background: "#fff1d6", color: "#c77700" }}>
+            <Icon name="story" size={18} />
+          </span>
+          <p className="story">
+            <MathText text={storyFor(a, b)} />
+          </p>
+        </div>
+        <div className="fact-row">
+          <span className="fact-ico" style={{ background: "#e8f1ff", color: "#2f6fe0" }}>
+            <Icon name="bulb" size={18} />
+          </span>
+          <p>
+            <b>{trick.title}.</b> <MathText text={trick.text} />
+          </p>
+        </div>
+        {a !== b && (
+          <div className="fact-row">
+            <span className="fact-ico" style={{ background: "#f3e8ff", color: "#7c3aed" }}>
+              <Icon name="swap" size={18} />
+            </span>
+            <p>
+              קסם ההחלפה: <bdi dir="ltr" className="math">{b} × {a}</bdi> זה בדיוק אותו דבר!
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

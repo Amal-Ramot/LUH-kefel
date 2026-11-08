@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Character from "@/components/Characters";
 import { Confetti } from "@/components/ui";
+import { Icon } from "@/components/icons";
 import { CHARACTERS, NUMBERS } from "@/lib/data";
 import { pickFact, useProgress } from "@/lib/progress";
 import { sounds } from "@/lib/sound";
@@ -98,7 +99,7 @@ export default function GamePage() {
       <div className="game-intro">
         <Confetti show={phase === "end" && newHigh} />
         <div className="rocket-big">🚀</div>
-        <h1 className="page-title">{phase === "intro" ? "מירוץ לירח!" : `צברתם ${score} נקודות!`}</h1>
+        <h1 className="display">{phase === "intro" ? "מירוץ לירח!" : `צברתם ${score} נקודות!`}</h1>
         {phase === "intro" ? (
           <p className="lead center">
             יש לכם {DURATION} שניות. כל תשובה נכונה מקפיצה את החללית למעלה. 3 תשובות נכונות ברצף = נקודות כפולות! 🔥
@@ -114,7 +115,7 @@ export default function GamePage() {
           ))}
         </div>
         <button className="btn big" onClick={start}>
-          {phase === "intro" ? "🚀 המראה!" : "🔁 עוד סיבוב"}
+          <Icon name={phase === "intro" ? "rocket" : "repeat"} size={20} /> {phase === "intro" ? "המראה!" : "עוד סיבוב"}
         </button>
       </div>
     );
@@ -132,9 +133,15 @@ export default function GamePage() {
       </div>
       <div className="game-main">
         <div className="game-hud">
-          <span className="pill">⏱️ {time}</span>
-          <span className="pill">⭐ {score}</span>
-          <span className={`pill ${mult > 1 ? "hot" : ""}`}>🔥 ×{mult}</span>
+          <span className="pill">
+            <Icon name="clock" size={16} /> {time}
+          </span>
+          <span className="pill">
+            <Icon name="star" size={16} /> {score}
+          </span>
+          <span className={`pill ${mult > 1 ? "hot" : ""}`}>
+            <Icon name="flame" size={16} /> ×{mult}
+          </span>
         </div>
         <div className="timebar">
           <span style={{ width: `${(time / DURATION) * 100}%` }} />

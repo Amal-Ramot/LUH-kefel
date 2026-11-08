@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Character from "@/components/Characters";
-import { Confetti, FactCard, Keypad, MathText } from "@/components/ui";
+import { Confetti, FactCard, Keypad, MathText, PageHeader } from "@/components/ui";
+import { Icon } from "@/components/icons";
 import { CHARACTERS, NUMBERS, factKey, storyFor } from "@/lib/data";
 import { MAX_BOX, boxOf, pickFact, useProgress } from "@/lib/progress";
 import { sounds } from "@/lib/sound";
@@ -59,10 +60,21 @@ export default function PracticePage() {
   if (!started)
     return (
       <>
-        <h1 className="page-title">🧠 מתרגלים בחוכמה</h1>
+        <PageHeader
+          icon="brain"
+          eyebrow="תרגול חכם"
+          title={
+            <>
+              מתרגלים <span className="gradient-text">בחוכמה</span>
+            </>
+          }
+        />
         <div className="info-box">
+          <Icon name="sparkles" size={20} />
+          <span>
           <b>איך זה עובד?</b> כל תרגיל גדל כמו ציפור: 🥚 → 🐣 → 🐥 → 🦅 → ⭐. כשעונים נכון – הוא גדל ויחזור פחות.
           כשטועים – הוא חוזר להיות ביצה ונתרגל אותו יותר. ככה המוח שומר את התרגילים לזמן ארוך!
+          </span>
         </div>
         <h2 className="section-title">אילו לוחות לתרגל?</h2>
         <div className="chooser">
@@ -80,7 +92,7 @@ export default function PracticePage() {
         </div>
         <div className="center">
           <button className="btn big" disabled={!ready} onClick={() => setStarted(true)}>
-            ▶️ מתחילים!
+            <Icon name="play" size={18} /> מתחילים
           </button>
         </div>
       </>
@@ -96,16 +108,16 @@ export default function PracticePage() {
       <Confetti show={party > 0} key={party} />
       <div className="practice-top">
         <span className="pill">
-          🔥 רצף: <b>{streak}</b>
+          <Icon name="flame" size={16} /> רצף: <b>{streak}</b>
         </span>
         <span className="pill">
-          ✅ {count.ok}/{count.all}
+          <Icon name="check" size={16} /> {count.ok}/{count.all}
         </span>
         <span className="pill">
           שלב התרגיל: <b>{BOX_NAMES[Math.min(box, MAX_BOX)]}</b>
         </span>
         <button className="btn small ghost" onClick={() => { setStarted(false); setFact(null); }}>
-          ⚙️ החלפת לוחות
+          <Icon name="settings" size={15} /> החלפת לוחות
         </button>
       </div>
 
@@ -126,7 +138,7 @@ export default function PracticePage() {
           <FactCard a={a} b={b} />
           <div className="center">
             <button className="btn big" onClick={nextFact} autoFocus>
-              הבנתי! הבא ←
+              הבנתי! הבא <Icon name="arrowLeft" size={20} />
             </button>
           </div>
         </>

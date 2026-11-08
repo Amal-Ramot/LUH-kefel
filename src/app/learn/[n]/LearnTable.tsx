@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import Character from "@/components/Characters";
 import { Confetti, FactCard, Keypad, MathText, Stars } from "@/components/ui";
+import { Icon } from "@/components/icons";
 import { CHARACTERS, NUMBERS, TRICKS, factSentence, speak, storyFor } from "@/lib/data";
 import { useProgress } from "@/lib/progress";
 import { sounds } from "@/lib/sound";
@@ -29,15 +30,19 @@ export default function LearnTable({ n }: { n: number }) {
 
   return (
     <div style={{ ["--c" as string]: c.color, ["--soft" as string]: c.soft }}>
-      <section className="table-hero">
+      <section className="table-hero" data-n={n}>
         <Character n={n} size={150} animate="bounce" />
         <div>
           <h1 className="page-title start">
             לוח ה-{n} עם <span style={{ color: c.color }}>{c.name}</span>
           </h1>
-          <p className="lead">🧷 למה {c.name}? <MathText text={c.why} />.</p>
+          <p className="lead">
+            למה {c.name}? <MathText text={c.why} />.
+          </p>
           <div className="trick-box">
-            <b>💡 הטריק: {trick.title}</b>
+            <b>
+              <Icon name="bulb" size={18} /> הטריק: {trick.title}
+            </b>
             <p>
               <MathText text={trick.text} />
             </p>
@@ -48,16 +53,16 @@ export default function LearnTable({ n }: { n: number }) {
 
       <div className="tabs">
         <button className={tab === "learn" ? "tab active" : "tab"} onClick={() => setTab("learn")}>
-          📖 לומדים
+          <Icon name="book" size={17} /> לומדים
         </button>
         <button className={tab === "quiz" ? "tab active" : "tab"} onClick={() => setTab("quiz")}>
-          ⭐ בוחן כוכבים
+          <Icon name="star" size={17} /> בוחן כוכבים
         </button>
       </div>
 
       {tab === "learn" ? (
         <>
-          <h2 className="section-title">🐾 קופצים בקפיצות של {n}</h2>
+          <h2 className="section-title">קופצים בקפיצות של {n}</h2>
           <p className="center muted">לחצו על הכפתור ו{c.name} תקפוץ קדימה. אמרו את המספר בקול!</p>
           <div className="hop-track" dir="ltr">
             {NUMBERS.map((m) => (
@@ -73,7 +78,7 @@ export default function LearnTable({ n }: { n: number }) {
           </div>
           <div className="center">
             <button className="btn big" onClick={doHop}>
-              {hop >= 10 ? "🔁 מההתחלה" : "🦘 קפיצה!"}
+              {hop >= 10 ? "מההתחלה" : "קפיצה!"} <Icon name={hop >= 10 ? "repeat" : "arrowLeft"} size={20} />
             </button>
           </div>
 
@@ -96,7 +101,7 @@ export default function LearnTable({ n }: { n: number }) {
           {open !== null && <FactCard a={n} b={open} onClose={() => setOpen(null)} />}
           <div className="center" style={{ marginTop: 24 }}>
             <button className="btn big secondary" onClick={() => setTab("quiz")}>
-              מוכנים? לבוחן הכוכבים ⭐
+              <Icon name="star" size={20} /> מוכנים? לבוחן הכוכבים
             </button>
           </div>
         </>
@@ -107,14 +112,14 @@ export default function LearnTable({ n }: { n: number }) {
       <div className="pager">
         {prev ? (
           <Link className="btn ghost" href={`/learn/${prev}/`}>
-            → לוח ה-{prev}
+            <Icon name="arrowRight" size={18} /> לוח ה-{prev}
           </Link>
         ) : (
           <span />
         )}
         {next && (
           <Link className="btn ghost" href={`/learn/${next}/`}>
-            לוח ה-{next} ←
+            לוח ה-{next} <Icon name="arrowLeft" size={18} />
           </Link>
         )}
       </div>
@@ -185,7 +190,7 @@ function Quiz({ n }: { n: number }) {
             setScore(0);
           }}
         >
-          🔁 שוב
+          <Icon name="repeat" size={20} /> שוב
         </button>
       </div>
     );
