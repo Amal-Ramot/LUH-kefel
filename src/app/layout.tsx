@@ -35,7 +35,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="grid-bg" aria-hidden="true" />
         <NavBar />
         <main className="container">{children}</main>
-        <footer className="footer">לוח הכפל בכיף · ההתקדמות נשמרת במכשיר שלכם בלבד</footer>
+        <footer className="footer">
+          לוח הכפל בכיף · ההתקדמות נשמרת במכשיר שלכם בלבד · איורים:{" "}
+          <a href="https://github.com/microsoft/fluentui-emoji" target="_blank" rel="noreferrer">
+            Microsoft Fluent Emoji
+          </a>{" "}
+          (MIT)
+        </footer>
       </body>
     </html>
   );

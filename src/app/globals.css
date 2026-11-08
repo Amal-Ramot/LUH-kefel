@@ -504,19 +504,154 @@ h3 {
 
 /* ---------- דמויות ---------- */
 .character {
+  position: relative;
   display: inline-block;
-  overflow: visible;
   flex-shrink: 0;
-  filter: drop-shadow(0 8px 10px rgba(21, 18, 46, 0.12));
+  vertical-align: middle;
 }
-.anim-float {
+.char-body {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  animation: breathe 3.2s ease-in-out infinite;
+  transition: transform 0.35s var(--ease-spring);
+}
+.char-body img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+  filter: saturate(1.08) drop-shadow(0 6px 8px rgba(21, 18, 46, 0.18));
+}
+.char-shadow {
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -2%;
+  height: 9%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(21, 18, 46, 0.22), transparent 70%);
+  animation: shadowBreath 3.2s ease-in-out infinite;
+}
+.anim-float .char-body {
   animation: float 3.4s ease-in-out infinite;
 }
-.anim-bounce {
+.anim-float .char-shadow {
+  animation: shadowFloat 3.4s ease-in-out infinite;
+}
+.anim-bounce .char-body {
   animation: bounce 1.6s ease-in-out infinite;
 }
-.anim-wiggle {
+.anim-bounce .char-shadow {
+  animation: shadowBounce 1.6s ease-in-out infinite;
+}
+.anim-wiggle .char-body {
   animation: wiggle 2.4s ease-in-out infinite;
+}
+/* תגובה לעכבר – הדמות "מתעוררת" */
+a:hover .character .char-body,
+button:hover .character .char-body,
+.character:hover .char-body {
+  animation: jump 0.7s var(--ease-spring);
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.025, 0.975);
+  }
+}
+@keyframes shadowBreath {
+  50% {
+    transform: scaleX(1.05);
+  }
+}
+@keyframes shadowFloat {
+  50% {
+    transform: scaleX(0.8);
+    opacity: 0.6;
+  }
+}
+@keyframes shadowBounce {
+  30% {
+    transform: scaleX(0.7);
+    opacity: 0.5;
+  }
+}
+@keyframes jump {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  25% {
+    transform: translateY(0) scale(1.1, 0.88);
+  }
+  55% {
+    transform: translateY(-16%) scale(0.94, 1.08) rotate(-6deg);
+  }
+  80% {
+    transform: translateY(0) scale(1.06, 0.94);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+/* הצלחה: קפיצת שמחה וניצוצות */
+.mood-wow .char-body {
+  animation: celebrate 0.9s var(--ease-spring) both !important;
+}
+@keyframes celebrate {
+  0% {
+    transform: scale(0.8);
+  }
+  40% {
+    transform: translateY(-18%) scale(1.12) rotate(8deg);
+  }
+  70% {
+    transform: translateY(0) scale(0.96, 1.04) rotate(-4deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.spark {
+  position: absolute;
+  color: var(--amber);
+  font-size: 22%;
+  pointer-events: none;
+  animation: spark 1.1s ease-out both;
+  text-shadow: 0 0 8px rgba(255, 176, 32, 0.8);
+}
+.s1 {
+  top: 2%;
+  left: 6%;
+}
+.s2 {
+  top: 12%;
+  right: 0;
+  animation-delay: 0.15s;
+  color: var(--pink);
+}
+.s3 {
+  bottom: 22%;
+  left: -4%;
+  animation-delay: 0.3s;
+  color: var(--primary);
+}
+@keyframes spark {
+  0% {
+    transform: scale(0) rotate(0);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.4) rotate(90deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.6) rotate(180deg) translateY(-30%);
+    opacity: 0;
+  }
 }
 @keyframes float {
   50% {
@@ -995,9 +1130,6 @@ h3 {
   background: radial-gradient(circle at 50% 60%, var(--soft), transparent 70%);
   margin-bottom: 6px;
 }
-.friend:hover .character {
-  animation: bounce 0.9s ease-in-out infinite;
-}
 .friend b {
   font-size: 0.98rem;
 }
@@ -1290,8 +1422,8 @@ h3 {
   animation: hop 0.5s ease-out;
 }
 .hopper .character {
-  width: clamp(36px, 8vw, 56px);
-  height: auto;
+  width: clamp(36px, 8vw, 56px) !important;
+  height: clamp(36px, 8vw, 56px) !important;
 }
 @keyframes hop {
   0% {
@@ -1539,45 +1671,51 @@ h3 {
   color: #b42318;
 }
 
-.keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.answer-input {
+  font: inherit;
+  width: 2.6ch;
+  line-height: 1.15;
+  outline: none;
+  caret-color: var(--primary);
+  vertical-align: baseline;
+  box-sizing: content-box;
+}
+.answer-input::placeholder {
+  color: rgba(109, 74, 255, 0.45);
+}
+.answer-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 5px rgba(109, 74, 255, 0.15);
+  animation: caretGlow 1.6s ease-in-out infinite;
+}
+@keyframes caretGlow {
+  50% {
+    box-shadow: 0 0 0 8px rgba(109, 74, 255, 0.08);
+  }
+}
+.answer-input[readonly] {
+  cursor: default;
+}
+.submit-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 10px;
-  max-width: 340px;
-  margin: 22px auto 0;
+  margin-top: 22px;
 }
-.key {
-  font: 700 1.7rem "Rubik", sans-serif;
-  padding: 14px 0;
-  border-radius: 20px;
-  border: 1px solid var(--line);
+.kbd-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+kbd {
+  display: inline-block;
+  font: 700 0.8rem "Rubik", sans-serif;
+  padding: 2px 8px;
+  border-radius: 7px;
   background: #fff;
-  color: var(--ink);
-  box-shadow: 0 1px 0 rgba(21, 18, 46, 0.08), 0 4px 0 #e9e6f3;
-  cursor: pointer;
-  transition: transform 0.08s, box-shadow 0.08s, background 0.15s;
-}
-.key:hover {
-  background: #faf9ff;
-}
-.key:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #e9e6f3;
-}
-.key:disabled {
-  opacity: 0.45;
-}
-.key-ok {
-  background: linear-gradient(135deg, #18c477, #0e9f5a);
-  color: #fff;
-  border: none;
-  box-shadow: 0 4px 0 #0b7d47, 0 12px 20px -10px rgba(18, 183, 106, 0.7);
-}
-.key-ok:hover {
-  background: linear-gradient(135deg, #1bd282, #0fab61);
-}
-.key-back {
-  background: #fff6ee;
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 0 #e4e1ee;
+  color: var(--ink-2);
 }
 
 .quiz-done {

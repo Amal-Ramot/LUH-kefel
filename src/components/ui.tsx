@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { CHARACTERS, bestTrickFor, factSentence, speak, storyFor } from "@/lib/data";
+import { useEffect, useRef, useState } from "react";
+import { CHARACTERS, bestTrickFor, storyFor } from "@/lib/data";
+import { speakFact } from "@/lib/voice";
 import Character from "./Characters";
 import { Icon, type IconName } from "./icons";
 
@@ -164,46 +165,73 @@ export function Confetti({ show }: { show: boolean }) {
   );
 }
 
-/** מקלדת מספרים – שליפה מהזיכרון חזקה יותר מבחירה מתוך אפשרויות */
-export function Keypad({
+/** שדה תשובה – מקלידים מהמקלדת (בטלפון נפתחת מקלדת מספרים), Enter לבדיקה */
+export function AnswerInput({
   value,
   onChange,
   onSubmit,
   disabled,
+  shown,
 }: {
   value: string;
   onChange: (v: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
+  /** ערך להצגה במקום מה שהוקלד (למשל התשובה הנכונה אחרי טעות) */
+  shown?: string;
 }) {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!disabled) ref.current?.focus({ preventScroll: true });
+  }, [disabled]);
+
+  // הקלדת ספרה כשהפוקוס במקום אחר מחזירה את הפוקוס לשדה
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
-      if (disabled) return;
-      if (/^[0-9]$/.test(e.key) && value.length < 3) onChange(value + e.key);
-      else if (e.key === "Backspace") onChange(value.slice(0, -1));
-      else if (e.key === "Enter" && value) onSubmit();
+      if (disabled || document.activeElement === ref.current) return;
+      if (/^[0-9]$/.test(e.key)) ref.current?.focus();
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [value, onChange, onSubmit, disabled]);
+  }, [disabled]);
 
-  const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "⌫", "0", "✓"];
   return (
-    <div className="keypad" dir="ltr">
-      {keys.map((k) => (
-        <button
-          key={k}
-          className={`key ${k === "✓" ? "key-ok" : ""} ${k === "⌫" ? "key-back" : ""}`}
-          disabled={disabled || (k === "✓" && !value)}
-          onClick={() => {
-            if (k === "⌫") onChange(value.slice(0, -1));
-            else if (k === "✓") onSubmit();
-            else if (value.length < 3) onChange(value + k);
-          }}
-        >
-          {k}
-        </button>
-      ))}
+    <input
+      ref={ref}
+      className="answer-box answer-input"
+      dir="ltr"
+      type="text"
+      inputMode="numeric"
+      pattern="[0-9]*"
+      autoComplete="off"
+      enterKeyHint="done"
+      aria-label="התשובה"
+      placeholder="?"
+      maxLength={3}
+      size={3}
+      value={shown ?? value}
+      readOnly={disabled}
+      onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, 3))}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && value && !disabled) {
+          e.preventDefault();
+          onSubmit();
+        }
+      }}
+    />
+  );
+}
+
+export function SubmitBar({ onSubmit, disabled }: { onSubmit: () => void; disabled?: boolean }) {
+  return (
+    <div className="submit-bar">
+      <button className="btn big" onClick={onSubmit} disabled={disabled}>
+        <Icon name="check" size={20} /> בדיקה
+      </button>
+      <span className="kbd-hint">
+        מקלידים את התשובה ולוחצים <kbd>Enter</kbd>
+      </span>
     </div>
   );
 }
@@ -228,7 +256,7 @@ export function FactCard({ a, b, onClose }: { a: number; b: number; onClose?: ()
           <div className="fact-eq" dir="ltr">
             {a} × {b} = <b>{a * b}</b>
           </div>
-          <button className="chip-btn" onClick={() => speak(factSentence(a, b))}>
+          <button className="chip-btn" onClick={() => speakFact(a, b)}>
             <Icon name="volume" size={16} /> הקשיבו
           </button>
         </div>

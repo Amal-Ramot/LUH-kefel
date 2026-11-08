@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Character from "@/components/Characters";
-import { Confetti, FactCard, Keypad, MathText, PageHeader } from "@/components/ui";
+import { AnswerInput, Confetti, FactCard, MathText, PageHeader, SubmitBar } from "@/components/ui";
 import { Icon } from "@/components/icons";
 import { CHARACTERS, NUMBERS, factKey, storyFor } from "@/lib/data";
 import { MAX_BOX, boxOf, pickFact, useProgress } from "@/lib/progress";
 import { sounds } from "@/lib/sound";
+import { speakFact } from "@/lib/voice";
 
 const BOX_NAMES = ["חדש", "ביצה 🥚", "אפרוח 🐣", "ציפור 🐥", "נשר 🦅", "כוכב ⭐"];
 
@@ -49,6 +50,7 @@ export default function PracticePage() {
       setTimeout(nextFact, 800);
     } else {
       sounds.wrong();
+      speakFact(a, b);
       setState("no");
       setStreak(0);
     }
@@ -124,7 +126,13 @@ export default function PracticePage() {
       <div className={`question ${state === "no" ? "shake" : ""} ${state === "ok" ? "pop" : ""}`}>
         <Character n={big} size={100} animate={state === "ok" ? "bounce" : "float"} mood={state === "ok" ? "wow" : "happy"} />
         <div className="q-text" dir="ltr">
-          {a} × {b} = <span className="answer-box">{state === "no" ? a * b : value || "?"}</span>
+          {a} × {b} = <AnswerInput
+            value={value}
+            onChange={setValue}
+            onSubmit={submit}
+            disabled={state !== "ask"}
+            shown={state === "no" ? String(a * b) : undefined}
+          />
         </div>
       </div>
 
@@ -143,7 +151,7 @@ export default function PracticePage() {
           </div>
         </>
       ) : (
-        <Keypad value={value} onChange={setValue} onSubmit={submit} disabled={state !== "ask"} />
+        <SubmitBar onSubmit={submit} disabled={state !== "ask" || !value} />
       )}
     </div>
   );

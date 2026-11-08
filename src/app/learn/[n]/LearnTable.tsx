@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import Character from "@/components/Characters";
-import { Confetti, FactCard, Keypad, MathText, Stars } from "@/components/ui";
+import { AnswerInput, Confetti, FactCard, MathText, Stars, SubmitBar } from "@/components/ui";
 import { Icon } from "@/components/icons";
-import { CHARACTERS, NUMBERS, TRICKS, factSentence, speak, storyFor } from "@/lib/data";
+import { CHARACTERS, NUMBERS, TRICKS, storyFor } from "@/lib/data";
+import { speakFact, speakNumber } from "@/lib/voice";
 import { useProgress } from "@/lib/progress";
 import { sounds } from "@/lib/sound";
 
@@ -25,7 +26,7 @@ export default function LearnTable({ n }: { n: number }) {
     const h = hop >= 10 ? 0 : hop + 1;
     setHop(h);
     sounds.pop();
-    if (h > 0) speak(String(n * h));
+    if (h > 0) speakNumber(n * h);
   };
 
   return (
@@ -90,7 +91,7 @@ export default function LearnTable({ n }: { n: number }) {
                 className={`fact-chip ${open === m ? "active" : ""}`}
                 onClick={() => {
                   setOpen(open === m ? null : m);
-                  speak(factSentence(n, m));
+                  speakFact(n, m);
                 }}
                 dir="ltr"
               >
@@ -148,7 +149,10 @@ function Quiz({ n }: { n: number }) {
     if (ok) {
       sounds.correct();
       setScore((s) => s + 1);
-    } else sounds.wrong();
+    } else {
+      sounds.wrong();
+      speakFact(n, m);
+    }
     setTimeout(
       () => {
         setFeedback(null);
@@ -205,7 +209,7 @@ function Quiz({ n }: { n: number }) {
       <div className={`question ${feedback === "no" ? "shake" : ""} ${feedback === "ok" ? "pop" : ""}`}>
         <Character n={n} size={90} animate={feedback === "ok" ? "bounce" : "float"} mood={feedback === "ok" ? "wow" : "happy"} />
         <div className="q-text" dir="ltr">
-          {n} × {m} = <span className="answer-box">{value || "?"}</span>
+          {n} × {m} = <AnswerInput value={value} onChange={setValue} onSubmit={submit} disabled={!!feedback} />
         </div>
       </div>
       {feedback === "ok" && <p className="feedback ok">🎉 נכון!</p>}
@@ -214,7 +218,7 @@ function Quiz({ n }: { n: number }) {
           כמעט! <span dir="ltr">{n} × {m} = {n * m}</span> <br />📖 <MathText text={storyFor(n, m)} />
         </p>
       )}
-      <Keypad value={value} onChange={setValue} onSubmit={submit} disabled={!!feedback} />
+      <SubmitBar onSubmit={submit} disabled={!!feedback || !value} />
     </div>
   );
 }
