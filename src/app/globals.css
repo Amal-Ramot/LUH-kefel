@@ -2170,170 +2170,245 @@ kbd {
 }
 
 /* =========================================================
-   משחק זיכרון
+   משחק זיכרון – שלושה שלבים
    ========================================================= */
-.memory {
-  max-width: 860px;
+.mem {
+  max-width: 620px;
   margin: 0 auto;
 }
-.mgrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  direction: ltr;
-  max-width: 540px;
-  margin: 0 auto;
-}
-.mgrid.p10 {
-  grid-template-columns: repeat(5, 1fr);
-  max-width: 680px;
-}
-@media (max-width: 600px) {
-  .mgrid,
-  .mgrid.p10 {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-  }
-  .mgrid.p6 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-.mcard {
-  position: relative;
-  aspect-ratio: 4 / 5;
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  perspective: 800px;
-  transition: transform 0.25s var(--ease-spring);
-}
-.mcard:hover:not(.open) {
-  transform: translateY(-4px);
-}
-.mface {
-  position: absolute;
-  inset: 0;
+.mem-steps {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 4px;
-  border-radius: 18px;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transition: transform 0.5s var(--ease);
-  box-shadow: var(--sh-2);
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
 }
-.mback {
+.mem-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(21, 18, 46, 0.05);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s var(--ease);
+}
+.mem-step i {
+  font: 800 0.78rem "Rubik", sans-serif;
+  font-style: normal;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(21, 18, 46, 0.1);
+}
+.mem-step.now {
   background: var(--grad);
-  color: rgba(255, 255, 255, 0.9);
-  font: 900 clamp(1.8rem, 6vw, 3rem) "Rubik", sans-serif;
-  border: 3px solid rgba(255, 255, 255, 0.55);
+  color: #fff;
+  box-shadow: var(--glow);
 }
-.mfront {
-  background: #fff;
-  border: 2px solid var(--line);
-  transform: rotateY(180deg);
-  font: 800 clamp(1.05rem, 3.6vw, 1.7rem) "Rubik", sans-serif;
-  color: var(--ink);
+.mem-step.now i {
+  background: rgba(255, 255, 255, 0.3);
 }
-.mfront.a {
-  background: #f2efff;
-  color: var(--primary);
-  font-size: clamp(1.5rem, 5.5vw, 2.6rem);
-  font-weight: 900;
-}
-.mcard.open .mback {
-  transform: rotateY(180deg);
-}
-.mcard.open .mfront {
-  transform: rotateY(360deg);
-}
-.mcard.matched {
-  cursor: default;
-  animation: matchPop 0.5s var(--ease-spring);
-}
-.mcard.matched .mfront {
-  border-color: var(--ok);
+.mem-step.past {
   background: #e8faf0;
   color: #087443;
-  box-shadow: 0 10px 22px -12px var(--ok);
+}
+.mem-step.past i {
+  background: var(--ok);
+  color: #fff;
+}
+.gems {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.gem {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
+  background: #fff;
+  border: 1.5px dashed #d9d5e8;
+  font-size: 1.5rem;
+  filter: grayscale(1) opacity(0.35);
+  transition: all 0.4s var(--ease-spring);
+}
+.gem.half {
+  filter: grayscale(0.5) opacity(0.7);
+  border-style: solid;
+  border-color: #c9b8ff;
+}
+.gem.on {
+  filter: none;
+  border: 1.5px solid #9b5cff;
+  box-shadow: 0 10px 20px -8px rgba(109, 74, 255, 0.6);
+  transform: scale(1.12) rotate(-6deg);
+}
+.mem-card {
+  position: relative;
+  padding: 26px 22px;
+  text-align: center;
+  overflow: hidden;
+  animation: rise 0.4s var(--ease) both;
+}
+.mem-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, var(--soft, #f2efff), transparent 60%);
+  pointer-events: none;
+}
+.mem-card > * {
+  position: relative;
+}
+.mem-count {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+.mem-eq {
+  font: 900 clamp(2.4rem, 9vw, 3.8rem) "Rubik", sans-serif;
+  letter-spacing: -0.02em;
+  margin: 6px 0 4px;
+  white-space: nowrap;
+}
+.mem-eq b {
+  color: var(--c, var(--primary));
+}
+.mem-hole {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.5em;
+  padding: 0 10px;
+  border-radius: 18px;
+  background: #f2efff;
+  border: 2px dashed rgba(109, 74, 255, 0.45);
+  color: var(--primary);
+  animation: caretGlow 1.6s ease-in-out infinite;
+}
+.mem-hole.ok {
+  background: #e8faf0;
+  border: 2px solid var(--ok);
+  color: var(--ok);
+  animation: matchPop 0.5s var(--ease-spring);
+}
+.mem-hole.no {
+  background: #fff0ee;
+  border: 2px solid var(--no);
+  color: var(--no);
 }
 @keyframes matchPop {
   50% {
-    transform: scale(1.08);
+    transform: scale(1.12);
   }
 }
-.mfront .character {
-  width: clamp(28px, 8vw, 46px) !important;
-  height: clamp(28px, 8vw, 46px) !important;
+.mem-story {
+  margin: 12px auto 0;
+  max-width: 460px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1px solid var(--line);
+  font-weight: 600;
+  line-height: 1.6;
 }
-.memory-demo {
+.mem-tip {
+  color: var(--muted);
+  margin: 14px 0 0;
+}
+.mem-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.mem-choices {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+  direction: ltr;
+}
+.mem-choice {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px 0;
+  font: 800 1.7rem "Rubik", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #e9e6f3;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s;
+}
+.mem-choice:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+.mem-choice:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+.mem-choice.right {
+  background: #e8faf0;
+  border-color: var(--ok);
+  color: #087443;
+}
+.mem-choice.wrong {
+  background: #fff0ee;
+  border-color: var(--no);
+  color: var(--no);
+  animation: shake 0.4s;
+}
+.mem-how {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 8px 0 24px;
+}
+.mem-how .card {
+  padding: 18px 14px;
+  text-align: center;
+}
+.mem-how .big {
+  font-size: 2rem;
+}
+.mem-how b {
+  display: block;
+  font: 800 1.05rem "Rubik", sans-serif;
+  margin: 4px 0 2px;
+}
+.mem-how span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+@media (max-width: 600px) {
+  .mem-how {
+    grid-template-columns: 1fr;
+  }
+  .mem-step span {
+    display: none;
+  }
+}
+.mem-done-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px auto;
+  max-width: 320px;
+}
+.mem-done-list div {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  color: var(--pink);
-}
-.memory-demo .mcard {
-  width: 110px;
-  cursor: default;
-}
-.mcard.static .mfront {
-  transform: none;
-}
-.levels {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  max-width: 640px;
-  margin: 12px auto 0;
-}
-.level {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 22px 12px;
-  cursor: pointer;
-  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
-}
-.level:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--sh-3);
-}
-.level b {
-  font: 800 1.4rem "Rubik", sans-serif;
-  color: var(--primary);
-}
-.level small {
-  color: var(--muted);
-  margin-top: 6px;
-}
-@media (max-width: 600px) {
-  .levels {
-    grid-template-columns: 1fr;
-  }
-}
-.memory-win {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px 22px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-  animation: rise 0.4s var(--ease) both;
-}
-.memory-win > div {
-  flex: 1;
-  min-width: 200px;
-}
-.memory-win h2 {
-  font-size: 1.3rem;
-  margin: 0 0 2px;
-}
-.memory-win p {
-  margin: 0;
-  color: var(--muted);
+  gap: 10px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  font: 800 1.25rem "Rubik", sans-serif;
 }
