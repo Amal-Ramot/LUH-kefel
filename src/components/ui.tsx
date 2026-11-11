@@ -14,6 +14,7 @@ const LINKS: { href: string; label: string; icon: IconName }[] = [
   { href: "/table/", label: "הלוח", icon: "grid" },
   { href: "/practice/", label: "תרגול", icon: "brain" },
   { href: "/game/", label: "משחק", icon: "rocket" },
+  { href: "/memory/", label: "זיכרון", icon: "cards" },
   { href: "/progress/", label: "הישגים", icon: "trophy" },
 ];
 

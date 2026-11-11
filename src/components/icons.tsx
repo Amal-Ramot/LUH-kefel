@@ -34,6 +34,12 @@ const PATHS: Record<string, React.ReactNode> = {
       <path d="M9 12H4s.6-3 2-4c1.6-1.1 5 0 5 0M12 15v5s3-.6 4-2c1.1-1.6 0-5 0-5" />
     </>
   ),
+  cards: (
+    <>
+      <rect x="3" y="6" width="11" height="15" rx="2" />
+      <path d="M8 6V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-5" />
+    </>
+  ),
   trophy: (
     <>
       <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />

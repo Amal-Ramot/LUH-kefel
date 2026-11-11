@@ -12,11 +12,13 @@ export type Progress = {
   boxes: Record<string, number>;
   stars: Record<number, number>; // כוכבים לכל לוח (0–3)
   gameHigh: number;
+  /** שיא במשחק הזיכרון: הכי מעט מהלכים לכל גודל לוח */
+  memoryBest: Record<number, number>;
   correct: number;
   streakDays: string[];
 };
 
-const empty = (): Progress => ({ boxes: {}, stars: {}, gameHigh: 0, correct: 0, streakDays: [] });
+const empty = (): Progress => ({ boxes: {}, stars: {}, gameHigh: 0, memoryBest: {}, correct: 0, streakDays: [] });
 
 function load(): Progress {
   try {
@@ -83,9 +85,18 @@ export function useProgress() {
     [update]
   );
 
+  const setMemoryBest = useCallback(
+    (pairs: number, moves: number) =>
+      update((p) => ({
+        ...p,
+        memoryBest: { ...p.memoryBest, [pairs]: Math.min(p.memoryBest[pairs] ?? Infinity, moves) },
+      })),
+    [update]
+  );
+
   const reset = useCallback(() => update(() => empty()), [update]);
 
-  return { progress, ready, record, setStars, setGameHigh, reset };
+  return { progress, ready, record, setStars, setGameHigh, setMemoryBest, reset };
 }
 
 export const boxOf = (p: Progress, a: number, b: number) => p.boxes[factKey(a, b)] ?? 0;

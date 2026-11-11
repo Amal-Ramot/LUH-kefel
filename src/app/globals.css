@@ -265,7 +265,7 @@ button {
   }
   .tabbar {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     position: fixed;
     z-index: 40;
     bottom: 10px;
@@ -2167,4 +2167,173 @@ kbd {
     animation-iteration-count: 1 !important;
     transition: none !important;
   }
+}
+
+/* =========================================================
+   משחק זיכרון
+   ========================================================= */
+.memory {
+  max-width: 860px;
+  margin: 0 auto;
+}
+.mgrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  direction: ltr;
+  max-width: 540px;
+  margin: 0 auto;
+}
+.mgrid.p10 {
+  grid-template-columns: repeat(5, 1fr);
+  max-width: 680px;
+}
+@media (max-width: 600px) {
+  .mgrid,
+  .mgrid.p10 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .mgrid.p6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.mcard {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  perspective: 800px;
+  transition: transform 0.25s var(--ease-spring);
+}
+.mcard:hover:not(.open) {
+  transform: translateY(-4px);
+}
+.mface {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 18px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.5s var(--ease);
+  box-shadow: var(--sh-2);
+}
+.mback {
+  background: var(--grad);
+  color: rgba(255, 255, 255, 0.9);
+  font: 900 clamp(1.8rem, 6vw, 3rem) "Rubik", sans-serif;
+  border: 3px solid rgba(255, 255, 255, 0.55);
+}
+.mfront {
+  background: #fff;
+  border: 2px solid var(--line);
+  transform: rotateY(180deg);
+  font: 800 clamp(1.05rem, 3.6vw, 1.7rem) "Rubik", sans-serif;
+  color: var(--ink);
+}
+.mfront.a {
+  background: #f2efff;
+  color: var(--primary);
+  font-size: clamp(1.5rem, 5.5vw, 2.6rem);
+  font-weight: 900;
+}
+.mcard.open .mback {
+  transform: rotateY(180deg);
+}
+.mcard.open .mfront {
+  transform: rotateY(360deg);
+}
+.mcard.matched {
+  cursor: default;
+  animation: matchPop 0.5s var(--ease-spring);
+}
+.mcard.matched .mfront {
+  border-color: var(--ok);
+  background: #e8faf0;
+  color: #087443;
+  box-shadow: 0 10px 22px -12px var(--ok);
+}
+@keyframes matchPop {
+  50% {
+    transform: scale(1.08);
+  }
+}
+.mfront .character {
+  width: clamp(28px, 8vw, 46px) !important;
+  height: clamp(28px, 8vw, 46px) !important;
+}
+.memory-demo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--pink);
+}
+.memory-demo .mcard {
+  width: 110px;
+  cursor: default;
+}
+.mcard.static .mfront {
+  transform: none;
+}
+.levels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 640px;
+  margin: 12px auto 0;
+}
+.level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 22px 12px;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
+}
+.level:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-3);
+}
+.level b {
+  font: 800 1.4rem "Rubik", sans-serif;
+  color: var(--primary);
+}
+.level small {
+  color: var(--muted);
+  margin-top: 6px;
+}
+@media (max-width: 600px) {
+  .levels {
+    grid-template-columns: 1fr;
+  }
+}
+.memory-win {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 22px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  animation: rise 0.4s var(--ease) both;
+}
+.memory-win > div {
+  flex: 1;
+  min-width: 200px;
+}
+.memory-win h2 {
+  font-size: 1.3rem;
+  margin: 0 0 2px;
+}
+.memory-win p {
+  margin: 0;
+  color: var(--muted);
 }
